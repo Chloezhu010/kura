@@ -1,0 +1,27 @@
+*.DS_Store
+# Ignore all .env files
+.env
+# Ignore all .log files
+*.log
+# Ignore node_modules directory
+node_modules/
+# Ignore build directory
+build/
+# Ignore coverage directory
+coverage/
+# Ignore dist directory
+dist/
+# Ignore .vscode directory
+.vscode/
+# Ignore .idea directory
+.idea/
+# Ignore .env.local file
+.env.local
+# Ignore .env.development file
+.env.development
+# Ignore .env.test file
+.claude/
+docs/
+project-idea.md
+CLAUDE.md
+AGENTS.md

@@ -1,0 +1,6 @@
+{
+  "/collection/add/page": "app/collection/add/page.js",
+  "/beans/[id]/page": "app/beans/[id]/page.js",
+  "/collection/page": "app/collection/page.js",
+  "/collection/add/form/page": "app/collection/add/form/page.js"
+}

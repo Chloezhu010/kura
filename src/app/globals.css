@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #FAFAF8;
+  --color-text: #1A1A1A;
+  --color-stone: #C4A882;
+  --color-dark: #1A1A1A;
+  --color-error: #C0392B;
+}
+
+html,
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Coverflow ─────────────────────────────────── */
+.coverflow-scene {
+  perspective: 1200px;
+  perspective-origin: 50% 45%;
+}
+
+.coverflow-card {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ── Inline editable fields ────────────────────── */
+.inline-edit {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  outline: none;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  padding: 2px 0;
+  transition: border-color 0.2s ease;
+}
+
+.inline-edit:focus {
+  border-bottom-color: var(--color-stone);
+}
+
+.inline-edit::placeholder {
+  color: #aaa;
+}
+
+/* ── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar {
+  height: 2px;
+  width: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-stone);
+  border-radius: 1px;
+}
+
+
+/* ── Saved flash ───────────────────────────────── */
+@keyframes saved-flash {
+  0% { opacity: 0; transform: translateY(-4px); }
+  20% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.saved-flash {
+  animation: saved-flash 1.5s ease forwards;
+}
+
+/* ── Spinner ───────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Star rating ───────────────────────────────── */
+.star-btn {
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+}
+
+.star-btn:active {
+  transform: scale(0.9);
+}
