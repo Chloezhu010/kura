@@ -21,10 +21,18 @@ export function useBeans() {
   const saveBean = useCallback(
     async (bean: Bean): Promise<Bean> => {
       const saved = await getRepository().save(bean)
-      await refresh()
+      setBeans((prev) => {
+        const idx = prev.findIndex((b) => b.id === saved.id)
+        if (idx >= 0) {
+          const next = [...prev]
+          next[idx] = saved
+          return next
+        }
+        return [saved, ...prev]
+      })
       return saved
     },
-    [refresh]
+    []
   )
 
   const deleteBean = useCallback(
@@ -39,5 +47,9 @@ export function useBeans() {
     return getRepository().getById(id)
   }, [])
 
-  return { beans, loading, saveBean, deleteBean, getBeanById, refresh }
+  const uploadPhoto = useCallback(async (file: File): Promise<string> => {
+    return getRepository().uploadPhoto(file)
+  }, [])
+
+  return { beans, loading, saveBean, deleteBean, getBeanById, refresh, uploadPhoto }
 }

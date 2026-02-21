@@ -2,12 +2,13 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback, useRef, useState } from 'react'
-import { compressImage } from '@/lib/compressImage'
+import { useBeans } from '@/hooks/useBeans'
 
 const SESSION_KEY = 'kura_pending_photo'
 
 export function AddPhotoScreen() {
   const router = useRouter()
+  const { uploadPhoto } = useBeans()
   const [preview, setPreview] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [compressing, setCompressing] = useState(false)
@@ -18,13 +19,13 @@ export function AddPhotoScreen() {
     if (!isImage) return
     setCompressing(true)
     try {
-      const base64 = await compressImage(file)
-      setPreview(base64)
-      sessionStorage.setItem(SESSION_KEY, base64)
+      const photoUrl = await uploadPhoto(file)
+      setPreview(photoUrl)
+      sessionStorage.setItem(SESSION_KEY, photoUrl)
     } finally {
       setCompressing(false)
     }
-  }, [])
+  }, [uploadPhoto])
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

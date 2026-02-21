@@ -1,5 +1,3 @@
-import heic2any from 'heic2any'
-
 /**
  * Returns true for HEIC/HEIF files regardless of whether the browser
  * reports the MIME type correctly (some report '' or 'application/octet-stream').
@@ -24,9 +22,12 @@ export async function compressImage(
   maxPx = 1200,
   quality = 0.82
 ): Promise<string> {
-  // Convert HEIC/HEIF → JPEG blob first (browsers can't decode HEIC on canvas)
+  // Convert HEIC/HEIF → JPEG blob first (browsers can't decode HEIC on canvas).
+  // Dynamic import keeps heic2any out of the SSR bundle — it uses `window` at
+  // module load time and will crash Node.js if imported statically.
   let source: File | Blob = file
   if (isHeic(file)) {
+    const heic2any = (await import('heic2any')).default
     const result = await heic2any({ blob: file, toType: 'image/jpeg' })
     source = Array.isArray(result) ? result[0] : result
   }

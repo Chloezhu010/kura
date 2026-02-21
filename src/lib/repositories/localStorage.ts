@@ -1,4 +1,5 @@
 import type { Bean, BeansRepository } from './types'
+import { compressImage } from '@/lib/compressImage'
 
 const STORAGE_KEY = 'kura_beans'
 
@@ -12,7 +13,14 @@ function load(): Bean[] {
 }
 
 function persist(beans: Bean[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(beans))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(beans))
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+      throw new Error('Storage quota exceeded. Try removing some beans or photos.')
+    }
+    throw e
+  }
 }
 
 export class LocalStorageBeansRepository implements BeansRepository {
@@ -43,5 +51,9 @@ export class LocalStorageBeansRepository implements BeansRepository {
 
   async delete(id: string): Promise<void> {
     persist(load().filter((b) => b.id !== id))
+  }
+
+  async uploadPhoto(file: File): Promise<string> {
+    return compressImage(file)
   }
 }

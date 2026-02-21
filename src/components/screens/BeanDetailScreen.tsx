@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useBeans } from '@/hooks/useBeans'
-import { compressImage } from '@/lib/compressImage'
 import { StarRating } from '@/components/ui/StarRating'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { SavedIndicator } from '@/components/ui/SavedIndicator'
@@ -16,7 +15,7 @@ interface BeanDetailScreenProps {
 
 export function BeanDetailScreen({ id }: BeanDetailScreenProps) {
   const router = useRouter()
-  const { getBeanById, saveBean, deleteBean } = useBeans()
+  const { getBeanById, saveBean, deleteBean, uploadPhoto } = useBeans()
   const [bean, setBean] = useState<Bean | null>(null)
   const [loading, setLoading] = useState(true)
   const [savedTick, setSavedTick] = useState(0)
@@ -36,6 +35,24 @@ export function BeanDetailScreen({ id }: BeanDetailScreenProps) {
   // Accumulates patches from rapid interactions (e.g. blur + star tap)
   const pendingPatch = useRef<Partial<Bean>>({})
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const flushSave = useCallback(() => {
+    if (saveTimer.current) {
+      clearTimeout(saveTimer.current)
+      saveTimer.current = null
+    }
+    const latest = beanRef.current
+    if (!latest || Object.keys(pendingPatch.current).length === 0) return
+    const toSave = { ...latest, ...pendingPatch.current }
+    pendingPatch.current = {}
+    saveBean(toSave).then((saved) => {
+      setBean(saved)
+      flash()
+    })
+  }, [saveBean, flash])
+
+  // Flush pending patches on unmount so navigating away doesn't lose data
+  useEffect(() => () => flushSave(), [flushSave])
 
   const update = useCallback(
     (patch: Partial<Bean>) => {
@@ -64,10 +81,10 @@ export function BeanDetailScreen({ id }: BeanDetailScreenProps) {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
       if (!file) return
-      const base64 = await compressImage(file)
-      update({ photo: base64 })
+      const photoUrl = await uploadPhoto(file)
+      update({ photo: photoUrl })
     },
-    [update]
+    [update, uploadPhoto]
   )
 
   async function handleDelete() {

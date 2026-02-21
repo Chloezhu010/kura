@@ -7,6 +7,9 @@
 node_modules/
 # Ignore build directory
 build/
+# Next.js build output
+.next/
+tsconfig.tsbuildinfo
 # Ignore coverage directory
 coverage/
 # Ignore dist directory
